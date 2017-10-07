@@ -1,0 +1,106 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+def appName = "kotlin-mvp"
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    flavorDimensions "default"
+
+    productFlavors {
+        dev { dimension "default" }
+        rel { dimension "default" }
+    }
+
+    signingConfigs {
+        /*def keystoreDir = "../signKey"
+        config {
+            File propFile = file(keystoreDir + "/sign_config.properties")
+            Properties prop = new Properties();
+            prop.load(new FileInputStream(propFile));
+            storeFile = file(keystoreDir + "/keystore.jks")
+            keyAlias = prop['keyAlias']
+            keyPassword = prop['keyPassword']
+            storePassword = prop['storePassword']
+        }*/
+    }
+
+    defaultConfig {
+        applicationId "com.dmh.mvp.kotlin"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        debug {
+            minifyEnabled false
+            //signingConfig null
+            //signingConfig signingConfigs.config
+        }
+    }
+    applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                output ->
+                    // 重命名产出的apk文件
+                    File outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def prod = variant.productFlavors[0]
+                        if (variant.buildType.name == "release") {
+                            def time = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                            outputFileName = "${appName}-${prod.name}-${defaultConfig.versionName}-${time}-release.apk"
+                        } else {
+                            outputFileName = "${appName}-${prod.name}-${defaultConfig.versionName}-debug.apk"
+                        }
+                    }
+                    // 删除unaligned apk
+                    if (output.zipAlign != null) {
+                        output.zipAlign.doLast {
+                            //output.zipAlign.inputFile.delete()
+                        }
+                    }
+            }
+    }
+    sourceSets {
+        main {
+            java.srcDirs = ['/src/main/kotlin']
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.google.com' }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.0.0-beta1'
+    implementation 'com.android.support:design:26.0.0-beta1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+    kapt 'com.google.dagger:dagger-compiler:2.11'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.orhanobut:logger:2.1.1'
+    implementation 'com.google.dagger:dagger:2.11'
+    implementation 'com.tencent.bugly:crashreport:latest.release'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.github.bumptech.glide:glide:3.8.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+}
