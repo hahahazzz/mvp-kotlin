@@ -188,8 +188,7 @@ class Api private constructor() {
                         data = if (apiResponse?.result == null || apiResponse.result is JsonNull) {
                             null
                         } else {
-                            jsonParse.fromJson(apiResponse.result, responseHandler
-                                    .dataTypeClass)
+                            jsonParse.fromJson(apiResponse.result, responseHandler.dataTypeClass)
                         }
                         resultCallbackHandler.post {
                             responseHandler.onSuccess(responseCode, apiResponse, data)
@@ -218,13 +217,10 @@ class Api private constructor() {
                     responseHandler.onComplete()
                 }
             } finally {
-                if (response != null) {
-                    try {
-                        response.close()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-
+                try {
+                    response?.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }
@@ -261,7 +257,11 @@ class Api private constructor() {
     }
 
     internal class LogInterceptor private constructor() : Interceptor {
+        private val lineSeparator = "\n"
+        private val tab = "\t"
 
+        private val requestName = Request::class.java.simpleName
+        private val responseName = Response::class.java.simpleName
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
@@ -276,33 +276,28 @@ class Api private constructor() {
 
             val logBuilder = StringBuilder()
             logBuilder.append(requestName)
-            logBuilder.append(LINE_SEPARATOR)
-            logBuilder.append(TAB)
+            logBuilder.append(lineSeparator)
+            logBuilder.append(tab)
             logBuilder.append(requestMethod)
-            logBuilder.append(TAB)
+            logBuilder.append(tab)
             logBuilder.append(requestUrl)
-            logBuilder.append(LINE_SEPARATOR)
+            logBuilder.append(lineSeparator)
 
             logBuilder.append(responseName)
-            logBuilder.append(LINE_SEPARATOR)
-            logBuilder.append(TAB)
+            logBuilder.append(lineSeparator)
+            logBuilder.append(tab)
             logBuilder.append("code=").append(responseCode)
-            logBuilder.append(TAB)
+            logBuilder.append(tab)
             logBuilder.append("message=").append(responseMessage)
-            logBuilder.append(TAB)
+            logBuilder.append(tab)
             logBuilder.append("body=")
-            logBuilder.append(LINE_SEPARATOR).append(responseBody)
+            logBuilder.append(lineSeparator).append(responseBody)
             LogUtils.d(logBuilder.toString())
             return response.newBuilder().body(ResponseBody.create(response.body()!!.contentType(), responseBody))
                     .build()
         }
 
         companion object {
-            private val LINE_SEPARATOR = "\n"
-            private val TAB = "\t"
-
-            private val requestName = Request::class.java.simpleName
-            private val responseName = Response::class.java.simpleName
 
             private val interceptor: LogInterceptor by lazy { LogInterceptor() }
             fun getInstance(): LogInterceptor = interceptor
