@@ -6,9 +6,9 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.util.ArrayMap
 import android.text.TextUtils
+import com.dmh.mvp.kotlin.BuildConfig
 import com.dmh.mvp.kotlin.base.App
 import com.dmh.mvp.kotlin.utils.LogUtils
-import com.dmh.mvp.kotlin.BuildConfig
 import com.google.gson.Gson
 import com.google.gson.JsonNull
 import okhttp3.*
@@ -148,12 +148,10 @@ class Api private constructor() {
             return
         }
         val tagName = tag.javaClass.name
-        (dispatcher.runningCalls().size - 1 downTo 0)
-                .map { dispatcher.runningCalls()[it] }
+        dispatcher.runningCalls()
                 .filter { tagName == it.request().tag() }
                 .forEach { it.cancel() }
-        (dispatcher.queuedCalls().size - 1 downTo 0)
-                .map { dispatcher.queuedCalls()[it] }
+        dispatcher.queuedCalls()
                 .filter { tagName == it.request().tag() }
                 .forEach { it.cancel() }
     }
@@ -187,10 +185,10 @@ class Api private constructor() {
                         responseHandler.ok = true
                         val apiResponse = jsonParse.fromJson(bodyContent, ApiResponse::class.java)
                         val data: T?
-                        if (apiResponse?.result == null || apiResponse.result is JsonNull) {
-                            data = null
+                        data = if (apiResponse?.result == null || apiResponse.result is JsonNull) {
+                            null
                         } else {
-                            data = jsonParse.fromJson(apiResponse.result, responseHandler
+                            jsonParse.fromJson(apiResponse.result, responseHandler
                                     .dataTypeClass)
                         }
                         resultCallbackHandler.post {

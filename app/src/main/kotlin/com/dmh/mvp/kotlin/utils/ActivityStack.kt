@@ -9,32 +9,31 @@ import java.util.*
  * Email : 1607868475@qq.com
  */
 class ActivityStack private constructor() {
-    private val activityList by lazy { Stack<AppCompatActivity>() }
+    private val activityStack: Stack<AppCompatActivity> by lazy { Stack<AppCompatActivity>() }
 
     companion object {
-        private val INSTANCE: ActivityStack by lazy { ActivityStack() }
-        fun get() = INSTANCE
+        private val instance: ActivityStack by lazy { ActivityStack() }
+        fun get(): ActivityStack = instance
     }
 
-    fun add(activity: AppCompatActivity) = activityList.add(activity)
+    fun <T : AppCompatActivity> add(activity: T) = activityStack.add(activity)
 
-    fun remove(activity: AppCompatActivity) = activityList.remove(activity)
+    fun <T : AppCompatActivity> remove(activity: T) = activityStack.remove(activity)
 
-    fun remove(cls: Class<AppCompatActivity>) = activityList.removeAll { it.javaClass == cls }
+    fun <T : AppCompatActivity> finish(cls: Class<T>) = activityStack.filter { it.javaClass == cls }.forEach { it.finish() }
 
-    fun finishUntil(cls: Class<AppCompatActivity>) {
-        if (activityList.size <= 0) {
-            return
-        }
-        while (activityList.lastElement().javaClass != cls) {
-            activityList.lastElement().finish()
+    fun <T : AppCompatActivity> finishUntilEquals(cls: Class<T>) {
+        while (activityStack.lastElement().javaClass != cls) {
+            val lastElement = activityStack.lastElement()
+            val remove = activityStack.remove(lastElement)
+            if (remove) {
+                lastElement.finish()
+            }
         }
     }
-
-    fun finish(cls: Class<AppCompatActivity>) = activityList.filter { it.javaClass == cls }.map { it.finish() }
 
     fun exit() {
-        activityList.map { it.finish() }
+        activityStack.map { it.finish() }
         Process.killProcess(Process.myPid())
         System.exit(0)
     }
