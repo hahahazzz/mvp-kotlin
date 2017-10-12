@@ -69,3 +69,9 @@ fun Boolean?.judge(yes: (Boolean?) -> Unit, no: (Boolean?) -> Unit = {}): Boolea
     }
     return this
 }
+
+fun Any?.ld() = LogUtils.d(this?.toString() ?: "Target is Null")
+
+fun Any?.lw() = LogUtils.w(this?.toString() ?: "Target is Null")
+
+fun Any?.le() = LogUtils.e(this?.toString() ?: "Target is Null")
