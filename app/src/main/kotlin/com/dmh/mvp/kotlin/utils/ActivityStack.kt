@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import java.util.*
 
 /**
- * Created by QiuGang on 2017/9/27 22:35
+ * Created by QiuGang on 2017/9/30 10:17
  * Email : 1607868475@qq.com
  */
 class ActivityStack private constructor() {
@@ -20,7 +20,9 @@ class ActivityStack private constructor() {
 
     fun <T : AppCompatActivity> remove(activity: T) = activityStack.remove(activity)
 
-    fun <T : AppCompatActivity> finish(cls: Class<T>) = activityStack.filter { it.javaClass == cls }.forEach { it.finish() }
+    fun <T : AppCompatActivity> finish(cls: Class<T>) = activityStack.filter { it.javaClass == cls }.forEach {
+        it.finish()
+    }
 
     fun <T : AppCompatActivity> finishUntilEquals(cls: Class<T>) {
         while (activityStack.lastElement().javaClass != cls) {
@@ -33,7 +35,7 @@ class ActivityStack private constructor() {
     }
 
     fun exit() {
-        activityStack.map { it.finish() }
+        activityStack.forEach { it.finish() }
         Process.killProcess(Process.myPid())
         System.exit(0)
     }

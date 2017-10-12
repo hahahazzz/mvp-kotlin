@@ -21,11 +21,6 @@ import com.dmh.mvp.kotlin.di.component.MainComponent
 import com.dmh.mvp.kotlin.utils.ActivityStack
 
 /**
- * Created by QiuGang on 2017/9/27 22:31
- * Email : 1607868475@qq.com
- */
-
-/**
  * 所有的activity的基类
  */
 abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
@@ -54,13 +49,13 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
     protected lateinit var activity: AppCompatActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        basePresenter = injectPresenter(DaggerMainComponent.builder().build())
         super.onCreate(savedInstanceState)
+        activity = this
         setContentView(getLayoutResId())
         setSupportToolbar()
-        activity = this
         ActivityStack.get().add(this)
         ButterKnife.bind(this)
-        basePresenter = injectPresenter(DaggerMainComponent.builder().build())
         basePresenter.attachView(this)
         start()
         basePresenter.start()
@@ -85,11 +80,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
         toolbar.setNavigationIcon(R.drawable.ic_action_back)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        actionBar!!.setDisplayHomeAsUpEnabled(true)
         val textToolbarTitle: TextView? = toolbar.findViewById<View>(R.id.text_title_in_toolbar) as TextView
-        val title = actionBar?.title
+        val title = actionBar.title
         textToolbarTitle?.text = title
-        actionBar?.title = ""
+        actionBar.title = ""
         toolbar.setNavigationOnClickListener { finish() }
     }
 

@@ -2,6 +2,7 @@ package com.dmh.mvp.kotlin.utils
 
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+
 import com.dmh.mvp.kotlin.base.App
 
 /**
@@ -14,19 +15,19 @@ import com.dmh.mvp.kotlin.base.App
 object SharedPrefUtils {
     private val SHARED_PREFERENCES = PreferenceManager.getDefaultSharedPreferences(App.get())
 
-    operator fun get(key: String, defValue: String = ""): String {
+    fun read(key: String, defValue: String = ""): String {
         return SHARED_PREFERENCES.getString(key, defValue)
     }
 
-    operator fun get(key: String, defValue: Boolean = false): Boolean {
+    fun read(key: String, defValue: Boolean = false): Boolean {
         return SHARED_PREFERENCES.getBoolean(key, defValue)
     }
 
-    operator fun get(key: String, defValue: Int = -1): Int {
+    fun read(key: String, defValue: Int = -1): Int {
         return SHARED_PREFERENCES.getInt(key, defValue)
     }
 
-    operator fun get(key: String, defValue: Long = -1): Long {
+    fun read(key: String, defValue: Long = -1): Long {
         return SHARED_PREFERENCES.getLong(key, defValue)
     }
 

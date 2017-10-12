@@ -1,7 +1,9 @@
 package com.dmh.mvp.kotlin.utils
+
 import android.content.Context
 import android.net.ConnectivityManager
 import com.dmh.mvp.kotlin.base.App
+
 
 /**
  * Created by QiuGang on 2017/9/24 22:32

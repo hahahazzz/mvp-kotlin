@@ -1,22 +1,32 @@
 package com.dmh.mvp.kotlin.base
 
 /**
- * Created by QiuGang on 2017/9/27 22:32
- * Email : 1607868475@qq.com
+ * @Author : QiuGang
+ * *
+ * @Email : 1607868475@qq.com
+ * *
+ * @Date : 2017/7/6 9:11
  */
 interface BaseContract {
     interface View {
         fun showLoadDialog()
+
         fun cancelLoadDialog()
+
         fun close()
     }
 
-    interface Presenter<in V : BaseContract.View> {
+    interface Presenter<in V : View> {
         fun attachView(v: V)
-        fun linkModel(): BaseContract.Model?
+
+        fun linkModel(): Model?
+
         fun start()
+
         fun resume()
+
         fun pause()
+
         fun destroy()
     }
 

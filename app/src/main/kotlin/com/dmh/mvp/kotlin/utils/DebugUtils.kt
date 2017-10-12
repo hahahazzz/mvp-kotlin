@@ -1,7 +1,8 @@
-package com.dmh.mvp.kotlin.utils
+package com.dmh.mvp.kotlin.utils;
 
 import android.os.Debug
 import com.dmh.mvp.kotlin.BuildConfig
+
 
 /**
  * @Author : QiuGang

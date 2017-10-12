@@ -5,8 +5,9 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
- * Created by QiuGang on 2017/9/27 22:34
- * Email : 1607868475@qq.com
+ * @Author : QiuGang
+ * @Email : 1607868475@qq.com
+ * @Date : 2017/7/6 13:11
  */
 abstract class BasePresenter<V : BaseContract.View> : BaseContract.Presenter<V> {
     init {
@@ -17,12 +18,14 @@ abstract class BasePresenter<V : BaseContract.View> : BaseContract.Presenter<V> 
     private var baseModel: BaseContract.Model? = null
 
     override fun attachView(v: V) {
-        view = v
+        this.view = v
         baseModel = linkModel()
     }
 
     override fun linkModel(): BaseContract.Model? = null
+
     override fun start() {
+
     }
 
     override fun resume() {
@@ -42,6 +45,7 @@ abstract class BasePresenter<V : BaseContract.View> : BaseContract.Presenter<V> 
         EventBus.getDefault().unregister(this)
     }
 
+    @SuppressWarnings
     @Subscribe
     fun defaultEventHandler(event: Any?) {
 

@@ -49,18 +49,13 @@ abstract class BaseFragment : Fragment(), BaseContract.View {
      */
     private lateinit var basePresenter: BaseContract.Presenter<BaseContract.View>
 
-    protected lateinit var activity: AppCompatActivity
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity = getActivity() as AppCompatActivity
-    }
+    protected val activity: AppCompatActivity by lazy { getActivity() as AppCompatActivity }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (contentView == null) {
+            basePresenter = injectPresenter(DaggerMainComponent.builder().build())
             contentView = inflater!!.inflate(getLayoutResId(), container, false)
             ButterKnife.bind(this, contentView!!)
-            basePresenter = injectPresenter(DaggerMainComponent.builder().build())
             basePresenter.attachView(this)
             start()
             basePresenter.start()
