@@ -17,17 +17,25 @@ import com.google.gson.JsonObject
  * Email : 1607868475@qq.com
  */
 /****************资源文件扩展方法******************/
-fun Int.asDimen(context: Context) = context.resources.getDimensionPixelSize(this)
+fun Context.dimen(@DimenRes id: Int) = this.resources.getDimensionPixelSize(id)
 
-fun Int.asColor(context: Context): Int {
+fun Context.color(@ColorRes id: Int): Int {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        context.resources.getColor(this, App.get().theme)
+        this.resources.getColor(id, this.theme)
     } else {
-        context.resources.getColor(this)
+        this.resources.getColor(id)
     }
 }
 
-fun Activity.getString(@StringRes res: Int, vararg args: Any): String {
+fun Context.drawable(@DrawableRes id: Int): Drawable {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        this.resources.getDrawable(id, this.theme)
+    } else {
+        this.resources.getDrawable(id)
+    }
+}
+
+fun Context.string(@StringRes res: Int, vararg args: Any): String {
     return this.resources.getString(res, args)
 }
 
@@ -36,10 +44,9 @@ fun <T : Activity> T.drawStatusBarColor(@ColorRes color: Int) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         val window = this.window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = color.asColor(this)
+        window.statusBarColor = color(color)
     }
 }
-
 
 /****************Gson相关扩展方法******************/
 inline fun <reified T> Gson.fromJson(json: String): T {
@@ -47,7 +54,7 @@ inline fun <reified T> Gson.fromJson(json: String): T {
 }
 
 fun JsonObject.getString(key: String): String {
-    if (this.has(key) && this.get(key) !is JsonNull) {
+    if (this.has(key) && (this.get(key) !is JsonNull)) {
         return this.get(key).asString
     }
     return ""
